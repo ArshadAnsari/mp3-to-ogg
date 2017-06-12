@@ -1,0 +1,11 @@
+{
+  "name"         : "mp3-to-ogg-converter",
+  "version"      : "1.0.0",
+  "description"  : "Audio Converter.",
+  "main"         : "app.js",
+  "author"       : "Arshad",
+  "dependencies" : {
+    "express"    : "latest",
+	"formidable" : "latest"
+    }
+}

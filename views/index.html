@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Audio Convertor</title>
+  <!-- <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'> -->
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-xs-12">
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <!-- <span class="glyphicon glyphicon-cloud-upload"></span> -->
+            <h2>Audio Convertor</h2>
+            <div class="progress">
+              <div class="progress-bar" role="progressbar"></div>
+            </div>
+            <button class="btn btn-lg upload-btn" type="button">Upload & Convert</button>
+            <button class="btn btn-lg download-btn" type="button">Download</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <input id="upload-input" type="file" name="uploads[]" multiple="multiple" accept=".mp3"></br>
+
+  <script src="javascripts/jquery-2.2.0.min.js"></script>
+  <script src="javascripts/bootstrap.min.js"></script>
+  <script src="javascripts/upload.js"></script>
+</body>
+</html>
