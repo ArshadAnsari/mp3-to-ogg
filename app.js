@@ -5,12 +5,20 @@ var formidable = require('formidable');
 var child_process = require('child_process');
 var fs = require('fs');
 var router = express.Router();
+var session = require("express-session");
 
 var workerProcess;
 var command;
+var sess;
 var fileArr = {};
+var _uploadPath;
+var userCount = 0;
 
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+		secret: 'hgbfdjjbvjbdoihsdvjbsdib',
+		cookie : {maxAge : 6000}
+}));
 
 app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname, 'views/index.html'));
@@ -18,8 +26,11 @@ app.get('/', function (req, res) {
 
 app.get('/download/:name', function (req, res) {
 	//console.log(req.params.name)
-	var filePath = "uploads/" + req.params.name;
+	console.log(sess.folderCounter)
+	// var filePath = "uploads/" + req.params.name;
+	var filePath = 'uploads/temp' + sess.folderCounter + '/' + req.params.name;
 	var fileName = req.params.name;
+	// console.log(filePath)
 	res.download(filePath, fileName, function(){});
 });
 
@@ -38,6 +49,20 @@ app.delete("/delete", function (req, res) {
 
 
 app.post('/upload', function (req, res) {
+	sess = req.session
+	if (sess && sess.folderCounter) 
+	{
+		// _uploadPath = 'uploads/temp' + sess.folderCounter + '/';
+	}
+	else 
+	{
+		userCount++;
+		sess.folderCounter = userCount;
+		fs.mkdir(__dirname + '/uploads/temp' + sess.folderCounter, function(err){});
+	}
+	_uploadPath = 'uploads/temp' + sess.folderCounter + '/';
+	
+	
 	fileArr = {};
 	var form = new formidable.IncomingForm();
 
@@ -45,7 +70,7 @@ app.post('/upload', function (req, res) {
 	form.multiples = true;
 
 	// store all uploads in the /uploads directory
-	form.uploadDir = path.join(__dirname, '/uploads');
+	form.uploadDir = path.join(__dirname, '/' + _uploadPath);
 
 	// every time a file has been uploaded successfully rename it to its original name
 	form.on('file', function (field, file) {
@@ -53,21 +78,21 @@ app.post('/upload', function (req, res) {
 		file.name = file.name.replace(/\s/g, "");
 		fileArr[file.name.split(".")[0]] = file.name.split(".")[0] + '.ogg';
 		fs.rename(file.path, path.join(form.uploadDir, file.name));
-		command = 'ffmpeg -i uploads/' + file.name + ' -b:a 24k -ac 1 -ar 16000 uploads/' + file.name.split(".")[0] + '.ogg';
+		command = 'ffmpeg -i '+ _uploadPath + file.name + ' -b:a 24k -ac 1 -ar 16000 ' + _uploadPath + file.name.split(".")[0] + '.ogg';
 		workerProcess = child_process.exec(command, function (error, stdout, stderr) {
 				if (error)
 					console.log("error in file conversion");
 			});
 		workerProcess.on('exit', function (code) {
 			
-			fs.readdir("uploads/", function(_err, _data){
+			fs.readdir(_uploadPath, function(_err, _data){
 				if(_err)
 				{}
 				else
 				{
 					_data.forEach( function (file){
 						if(file.split(".")[1] == "mp3")
-							fs.unlink("uploads/"+file, function(e){});
+							fs.unlink(_uploadPath+file, function(e){});
 					});
 				}
 			});

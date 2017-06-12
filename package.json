@@ -6,6 +6,7 @@
   "author"       : "Arshad",
   "dependencies" : {
     "express"    : "latest",
-	"formidable" : "latest"
+	"formidable" : "latest",
+	"express-session" : "latest"
     }
 }
